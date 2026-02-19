@@ -4,6 +4,7 @@ let phoneInputElement = document.getElementById('phone');
 let ageInputElement = document.getElementById('age');
 let addressInputElement = document.getElementById('address');
 let duplicateDiv = document.getElementById('duplicate-alert');
+let failureDiv = document.getElementById('failure-alert');
 let successDiv = document.getElementById('success-alert');
 
 document.querySelector('form').addEventListener('submit', validateNewUser);
@@ -70,11 +71,13 @@ function validateNewUser(event) {
     if (!invalidInput) {
         // when we save the user there's a final check for duplicates
         const success = saveUser(newUser);
-        if (success) {
+        if (success) { // saved user
             successDiv.classList.remove('d-none');
-        } else {
+        } else { // duplicate found
             duplicateDiv.classList.remove('d-none');
         }
+    } else { // bad input
+        failureDiv.classList.remove('d-none');
     }
 }
 
@@ -152,6 +155,7 @@ function resetFormInputStyles() {
 
     // d-none hides the duplicate div
     duplicateDiv.classList.add('d-none');
+    failureDiv.classList.add('d-none');
     successDiv.classList.add('d-none');
 }
 
