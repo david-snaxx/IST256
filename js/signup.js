@@ -4,6 +4,7 @@ let phoneInputElement = document.getElementById('phone');
 let ageInputElement = document.getElementById('age');
 let addressInputElement = document.getElementById('address');
 let duplicateDiv = document.getElementById('duplicate-alert');
+let successDiv = document.getElementById('success-alert');
 
 document.querySelector('form').addEventListener('submit', validateNewUser);
 
@@ -30,6 +31,7 @@ class User {
  */
 function validateNewUser(event) {
     resetFormInputStyles();
+    event.preventDefault();
     let invalidInput = false;
 
     const newUser = new User(
@@ -65,8 +67,14 @@ function validateNewUser(event) {
         invalidInput = true;
     }
 
-    if (invalidInput) {
-        event.preventDefault();
+    if (!invalidInput) {
+        // when we save the user there's a final check for duplicates
+        const success = saveUser(newUser);
+        if (success) {
+            successDiv.classList.remove('d-none');
+        } else {
+            duplicateDiv.classList.remove('d-none');
+        }
     }
 }
 
@@ -144,6 +152,7 @@ function resetFormInputStyles() {
 
     // d-none hides the duplicate div
     duplicateDiv.classList.add('d-none');
+    successDiv.classList.add('d-none');
 }
 
 /**
@@ -157,16 +166,15 @@ function resetFormInputStyles() {
 function saveUser(newUser) {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
 
-    // duplicate users are determined by email, one email = one user
+    // was there a duplicate email in localStorage?
     const isDuplicate = users.some((storedUser) => storedUser.email === newUser.email);
 
     if (isDuplicate) {
-        // d-none hides the duplicate div
-        duplicateDiv.classList.remove('d-none');
         return false;
-    } else {
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-        return true;
     }
+
+    // no duplicate
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    return true;
 }
