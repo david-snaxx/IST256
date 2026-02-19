@@ -37,12 +37,14 @@
                 <form>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="email" required />
+                        <input type="text" class="form-control" id="email" />
+                        <div class="invalid-feedback">You must input a valid email address.</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="fullName" required />
+                        <input type="text" class="form-control" id="fullName" />
+                        <div class="invalid-feedback">You must input a name.</div>
                     </div>
 
                     <div class="mb-3">
@@ -52,12 +54,14 @@
 
                     <div class="mb-3">
                         <label for="age" class="form-label">Age<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="age" required />
+                        <input type="text" class="form-control" id="age" />
+                        <div class="invalid-feedback">Age must be a positive number.</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="address" class="form-label">Address<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="address" required />
+                        <input type="text" class="form-control" id="address" />
+                        <div class="invalid-feedback">You must input an address.</div>
                     </div>
 
                     <div class="text-muted small mb-3">Required fields marked with: <span class="text-danger">*</span></div>
@@ -77,6 +81,7 @@
         </div>
     </footer>
 
+    <script src="js/signup.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
