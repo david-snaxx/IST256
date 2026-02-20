@@ -13,3 +13,7 @@
     color: var(--text-dark);
     text-decoration: none;
 }
+
+body {
+    background-color: #F4F6FA;
+}
