@@ -1,15 +1,19 @@
 /* global styles */
 
 :root {
-    --bg-info: #3e3e3e;
-    --bg-accent: #ffffff;
-    --text: #000000;
-    --text-dark: #ffffff;
-    --text-accent: #3c5cdc;
+    --brand-color: #1e407c;
+    --brand-color-dark: #001E44;
+    --brand-color-light: #96BEE6;
 }
 
 .navbar, footer, .navbar a, footer a  {
-    background-color: var(--bg-info);
-    color: var(--text-dark);
+    background-color: var(--brand-color);
+    color: white;
     text-decoration: none;
+}
+
+.navbar a:hover, footer a:hover {
+    transition: color ease-in-out 0.2s;
+    color: var(--brand-color-light);
+    text-shadow: 2px 2px 2px var(--brand-color-dark);
 }
