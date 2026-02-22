@@ -15,6 +15,7 @@ body {
     font-family: "Times New Roman", Times, serif;
     font-size: 1rem;
     line-height: 1.6;
+    background-color: #F4F6FA;
 }
 
 h1 {
@@ -45,7 +46,6 @@ h6 {
     background-color: var(--brand-color);
     color: white;
     text-decoration: none;
-    font-family: "Times New Roman", Times, serif;
 }
 
 .navbar a:hover, footer a:hover {
