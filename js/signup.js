@@ -63,8 +63,8 @@ function prefillFormIfEditMode() {
 }
 
 function validateNewUser(event) {
-    resetFormInputStyles();
     event.preventDefault();
+    resetFormInputStyles();
     let invalidInput = false;
 
     const newUser = new User(
