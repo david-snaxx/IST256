@@ -13,3 +13,17 @@
     color: var(--text-dark);
     text-decoration: none;
 }
+
+.navbar .nav-link {
+    color: var(--text-dark);
+}
+
+.navbar .nav-link:hover,
+.navbar .navbar-brand:hover,
+footer a:hover {
+    color: var(--text-accent);
+}
+
+main .container {
+    max-width: 960px;
+}
