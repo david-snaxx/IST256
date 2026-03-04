@@ -1,6 +1,6 @@
 import { loadProducts } from "./products.js";
 
-function loadCart() {
+export function loadCart() {
     return JSON.parse(localStorage.getItem("cart")) || [];
 }
 
@@ -8,16 +8,16 @@ function saveCart(cart) {
     localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-function clearCart() {
+export function clearCart() {
     saveCart([]);
     renderCart();
 }
 
-function addToCart(productId, quantity) {
+export function addToCart(productId, quantity) {
     changeCartProductQuantity(productId, quantity);
 }
 
-function removeFromCart(productId, quantity) {
+export function removeFromCart(productId, quantity) {
     changeCartProductQuantity(productId, -quantity);
 }
 
@@ -53,7 +53,7 @@ function changeCartProductQuantity(productId, quantityChange) {
     renderCart();
 }
 
-function getCartTotal() {
+export function getCartTotal() {
     const cart = loadCart();
     let sum = 0;
     cart.forEach(product => {
