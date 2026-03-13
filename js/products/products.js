@@ -7,8 +7,9 @@ export class Product {
     specifications;
     price;
     additionalInfo;
+    quantity;
 
-    constructor(id, name, image, description, category, specifications, price, additionalInfo) {
+    constructor(id, name, image, description, category, specifications, price, additionalInfo, quantity) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -17,6 +18,7 @@ export class Product {
         this.specifications = specifications;
         this.price = price;
         this.additionalInfo = additionalInfo;
+        this.quantity = quantity;
     }
 }
 

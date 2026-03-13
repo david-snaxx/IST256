@@ -29,11 +29,12 @@ function changeCartProductQuantity(productId, quantityChange) {
     // new cart Product
     if (!itemInCart) {
         if (quantityChange > 0) {
-            const productToAdd = loadProducts().find(p => p.id === productId);
+            const productExists = loadProducts().some(p => p.id === productId);
 
-            if (productToAdd) {
-                cart.push({ ...productToAdd, quantity: quantityChange });
+            if (productExists) {
+                cart.push({ id: productId, quantity: quantityChange });
                 saveCart(cart);
+                renderCart();
             }
         }
         // nothing more to do since we can't take away from zero
@@ -55,9 +56,11 @@ function changeCartProductQuantity(productId, quantityChange) {
 
 export function getCartTotal() {
     const cart = loadCart();
+    const products = loadProducts();
     let sum = 0;
-    cart.forEach(product => {
-        sum += product.price * product.quantity;
+    cart.forEach(item => {
+        const product = products.find(p => p.id === item.id);
+        if (product) sum += product.price * item.quantity;
     });
     return sum;
 }
@@ -80,11 +83,14 @@ function renderCart() {
     }
 
     // fill the table with products in cart
+    const products = loadProducts();
     cart.forEach(item => {
+        const product = products.find(p => p.id === item.id);
+        if (!product) return;
         $body.append(`
             <tr>
-                <td>${item.name}</td>
-                <td>$${item.price.toFixed(2)}</td>
+                <td>${product.name}</td>
+                <td>$${product.price.toFixed(2)}</td>
                 <td style="width:120px">
                     <div class="input-group input-group-sm">
                         <button class="btn btn-outline-secondary btn-qty-minus" data-id="${item.id}">−</button>
@@ -92,7 +98,7 @@ function renderCart() {
                         <button class="btn btn-outline-secondary btn-qty-plus" data-id="${item.id}">+</button>
                     </div>
                 </td>
-                <td class="text-end">$${(item.price * item.quantity).toFixed(2)}</td>
+                <td class="text-end">$${(product.price * item.quantity).toFixed(2)}</td>
                 <td class="text-center">
                     <button class="btn btn-sm btn-outline-danger btn-remove" data-id="${item.id}">&times;</button>
                 </td>
@@ -109,18 +115,18 @@ $(function () {
 
     // increment quantity for item by 1
     $('#cart-body').on('click', '.btn-qty-plus', function () {
-        addToCart(Number($(this).data('id')), 1);
+        addToCart(String($(this).data('id')), 1);
     });
 
     // decrement quantity for item by 1
     // if the quantity hits 0, the item will be completely removed from the cart
     $('#cart-body').on('click', '.btn-qty-minus', function () {
-        removeFromCart(Number($(this).data('id')), 1);
+        removeFromCart(String($(this).data('id')), 1);
     });
 
     // remove ALL of a single item with the "x" button
     $('#cart-body').on('click', '.btn-remove', function () {
-        const id = Number($(this).data('id'));
+        const id = String($(this).data('id'));
         const item = loadCart().find(i => i.id === id);
         if (item) removeFromCart(id, item.quantity);
     });
