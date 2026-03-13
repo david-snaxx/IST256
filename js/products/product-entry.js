@@ -1,4 +1,4 @@
-import { loadProducts, saveProducts } from "./products/products.js";
+import { loadProducts, saveProducts } from "./products.js";
 
 const $form = $("#productEntryForm");
 const $id = $("#productEntryId");

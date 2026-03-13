@@ -1,5 +1,5 @@
-import { loadProducts } from "./products/products.js";
-import { addToCart } from "./products/shopping-cart.js";
+import { loadProducts } from "./products.js";
+import { addToCart } from "./shopping-cart.js";
 
 function getProductIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
