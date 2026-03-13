@@ -37,7 +37,7 @@ function renderProductDetails() {
     document.getElementById("detailsAdditional").textContent = product.additionalInfo ?? "";
 
     document.getElementById("addToCartBtn").addEventListener("click", () => {
-        addToCart(Number(product.id), 1);
+        addToCart(String(product.id), 1);
         alert("Item added to cart!");
     });
 }
