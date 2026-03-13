@@ -113,61 +113,7 @@ const testUsers = [
     }
 ];
 
-const testProducts = [
-    {
-        id: "1",
-        name: "Conference T-Shirt",
-        image: "",
-        description: "A soft, comfortable t-shirt featuring the official conference logo.",
-        category: "Apparel",
-        specifications: "Available in S, M, L, XL. 100% cotton.",
-        price: 24.99,
-        additionalInfo: "Sizes are limited — first come, first served."
-    },
-    {
-        id: "2",
-        name: "Speaker Pass Upgrade",
-        image: "",
-        description: "Upgrade your badge to gain access to exclusive speaker lounges and Q&A sessions.",
-        category: "Access",
-        specifications: "Valid for the full duration of the conference.",
-        price: 49.99,
-        additionalInfo: "Must be purchased alongside a general admission ticket."
-    },
-    {
-        id: "3",
-        name: "Workshop Materials Kit",
-        image: "",
-        description: "A printed kit containing all slides, exercises, and reference sheets for registered workshops.",
-        category: "Materials",
-        specifications: "Spiral-bound, approximately 80 pages.",
-        price: 14.99,
-        additionalInfo: "One kit covers all workshops. Digital version included via email."
-    },
-    {
-        id: "4",
-        name: "Conference Tote Bag",
-        image: "",
-        description: "A durable canvas tote bag branded with the conference logo, perfect for carrying swag and materials.",
-        category: "Accessories",
-        specifications: "Canvas, 15x16 inches, with interior pocket.",
-        price: 12.99,
-        additionalInfo: ""
-    }
-];
-
-const testCart = [
-    { id: "1", quantity: 2 },
-    { id: "2", quantity: 1 },
-    { id: "3", quantity: 4 }
-];
-const totalItems = testCart.reduce((sum, item) => sum + item.quantity, 0);
-
 localStorage.setItem('entries', JSON.stringify(testEntries));
 localStorage.setItem('users', JSON.stringify(testUsers));
-localStorage.setItem('products', JSON.stringify(testProducts));
-localStorage.setItem('cart', JSON.stringify(testCart));
 
 console.log(`Test data loaded: ${testEntries.length} entries, ${testUsers.length} users.`);
-console.log(`Test product data loaded: ${testProducts.length} products.`);
-console.log(`Test cart data loaded: ${testCart.length} unique products, ${totalItems} total items in cart.`);

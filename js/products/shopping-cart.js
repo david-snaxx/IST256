@@ -21,7 +21,7 @@ export function removeFromCart(productId, quantity) {
     changeCartProductQuantity(productId, -quantity);
 }
 
-function changeCartProductQuantity(productId, quantityChange) {
+async function changeCartProductQuantity(productId, quantityChange) {
     let cart = loadCart();
 
     const itemInCart = cart.find(product => product.id === productId);
@@ -29,7 +29,8 @@ function changeCartProductQuantity(productId, quantityChange) {
     // new cart Product
     if (!itemInCart) {
         if (quantityChange > 0) {
-            const productExists = loadProducts().some(p => p.id === productId);
+            const products = await loadProducts();
+            const productExists = products.some(p => p.id === productId);
 
             if (productExists) {
                 cart.push({ id: productId, quantity: quantityChange });
@@ -54,9 +55,9 @@ function changeCartProductQuantity(productId, quantityChange) {
     renderCart();
 }
 
-export function getCartTotal() {
+export async function getCartTotal() {
     const cart = loadCart();
-    const products = loadProducts();
+    const products = await loadProducts();
     let sum = 0;
     cart.forEach(item => {
         const product = products.find(p => p.id === item.id);
@@ -65,8 +66,9 @@ export function getCartTotal() {
     return sum;
 }
 
-function renderCart() {
+async function renderCart() {
     const cart = loadCart();
+    const products = await loadProducts();
     const $body = $('#cart-body');
     const $empty = $('#cart-empty');
     const $total = $('#cart-total');
@@ -82,11 +84,12 @@ function renderCart() {
         $empty.addClass('d-none');
     }
 
-    // fill the table with products in cart
-    const products = loadProducts();
+    // fill the table with products in cart, accumulating total as we go
+    let total = 0;
     cart.forEach(item => {
         const product = products.find(p => p.id === item.id);
         if (!product) return;
+        total += product.price * item.quantity;
         $body.append(`
             <tr>
                 <td>${product.name}</td>
@@ -106,8 +109,7 @@ function renderCart() {
         `);
     });
 
-    // cart total
-    $total.text('$' + getCartTotal().toFixed(2));
+    $total.text('$' + total.toFixed(2));
 }
 
 $(function () {
