@@ -7,9 +7,8 @@ export class Product {
     specifications;
     price;
     additionalInfo;
-    quantity;
 
-    constructor(id, name, image, description, category, specifications, price, additionalInfo, quantity) {
+    constructor(id, name, image, description, category, specifications, price, additionalInfo) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -18,46 +17,63 @@ export class Product {
         this.specifications = specifications;
         this.price = price;
         this.additionalInfo = additionalInfo;
-        this.quantity = quantity;
     }
 }
 
 /**
- * Returns all {@link Product} objects currently held in local storage.
- * @return {any|*[]} {@link Product}s held in local storage OR an empty array is none exist.
+ * Fetches the base product catalog from the server and merges it with any
+ * user-added products held in local storage. Local storage takes precedence,
+ * so user-added or updated products will override catalog entries with the same id.
+ * @return {Promise<object[]>} Resolving to the merged array of {@link Product}-shaped objects.
  */
 export function loadProducts() {
-    return JSON.parse(localStorage.getItem('products')) || [];
+    return fetch('/assets/products.json')
+        .then(response => response.json())
+        .then(assetsProducts => {
+            const localProducts = JSON.parse(localStorage.getItem('products')) || [];
+            const merged = [...assetsProducts];
+            // add localStorage products that don't overlap assets product ids
+            localProducts.forEach(localProduct => {
+                const idx = merged.findIndex(p => String(p.id) === String(localProduct.id));
+                if (idx !== -1) merged[idx] = localProduct;
+                else merged.push(localProduct);
+            });
+            return merged;
+        });
 }
 
-/**
- * Overwrites the products object array in local storage with the provided product list.
- * @param products An array of {@link products} to take the place of the 'products' key.
- */
-export function saveProducts(products) {
+function saveLocalProducts(products) {
     localStorage.setItem('products', JSON.stringify(products));
 }
 
 /**
- * Adds a new product object to local storage to be rendered in searches and added to carts.
- * @param product The {@link Product} to add to local storage.
+ * Adds a new product to local storage.
+ * @param product The {@link Product} to add.
  */
 export function addProduct(product) {
-    let products = loadProducts();
-    products.push(product);
-    saveProducts(products);
+    const localProducts = JSON.parse(localStorage.getItem('products')) || [];
+    localProducts.push(product);
+    saveLocalProducts(localProducts);
 }
 
 /**
- * Modifies an existing {@link Product} if one exists in local storage.
+ * Modifies an existing {@link Product} if one exists in the merged catalog.
+ * If the product originated from the base catalog, it is saved as an override in local storage.
  * @param updatedProduct The new version of the {@link Product} object.
- * @return {boolean} True if a matching product was found and updated. False if there was no preexisting product.
+ * @return {Promise<boolean>} Resolving to true if found and updated, false if not found.
  */
-export function updateProduct(updatedProduct) {
-    let products = loadProducts();
-    const index = products.findIndex(p => String(p.id) === String(updatedProduct.id));
-    if (index === -1) return false;
-    products[index] = updatedProduct;
-    saveProducts(products);
+export async function updateProduct(updatedProduct) {
+    const products = await loadProducts();
+    const exists = products.some(p => String(p.id) === String(updatedProduct.id));
+    if (!exists) return false;
+
+    const localProducts = JSON.parse(localStorage.getItem('products')) || [];
+    const idx = localProducts.findIndex(p => String(p.id) === String(updatedProduct.id));
+    if (idx !== -1) {
+        localProducts[idx] = updatedProduct;
+    } else {
+        localProducts.push(updatedProduct);
+    }
+    saveLocalProducts(localProducts);
     return true;
 }

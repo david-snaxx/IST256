@@ -6,9 +6,9 @@ function getProductIdFromUrl() {
     return params.get("id");
 }
 
-function renderProductDetails() {
+async function renderProductDetails() {
     const productId = getProductIdFromUrl();
-    const products = loadProducts();
+    const products = await loadProducts();
 
     const product = products.find(p => String(p.id) === String(productId));
 

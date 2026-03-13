@@ -1,4 +1,4 @@
-import {loadProducts, Product, saveProducts} from "./products.js";
+import {loadProducts, addProduct, Product} from "./products.js";
 
 const $form = $("#productEntryForm");
 const $id = $("#productEntryId");
@@ -13,14 +13,14 @@ const $additionalInfo = $("#additionalProductInfo");
 const $duplicateAlert = $("#duplicate-alert");
 const $successAlert = $("#success-alert");
 
-$form.on("submit", function (event) {
+$form.on("submit", async function (event) {
     event.preventDefault();
 
     resetFormStyles();
 
     if (!validateFormInput()) return;
 
-    const products = loadProducts();
+    const products = await loadProducts();
     const duplicate = products.some(p => String(p.id) === String($id.val().trim()));
 
     if (duplicate) {
@@ -41,8 +41,7 @@ $form.on("submit", function (event) {
         $additionalInfo.val().trim()
     );
 
-    products.push(product);
-    saveProducts(products);
+    addProduct(product);
 
     $successAlert.removeClass("d-none");
     $form[0].reset();
