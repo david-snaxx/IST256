@@ -113,6 +113,7 @@ const testUsers = [
     }
 ];
 
+// This doubles for the set of test product details and cart items
 const testCart = [
     {
         id: 1,
@@ -141,6 +142,7 @@ const totalItems = testCart.reduce((sum, item) => sum + item.quantity, 0);
 localStorage.setItem('entries', JSON.stringify(testEntries));
 localStorage.setItem('users', JSON.stringify(testUsers));
 localStorage.setItem('cart', JSON.stringify(testCart));
+localStorage.setItem('products', JSON.stringify(testCart));
 
 console.log(`Test data loaded: ${testEntries.length} entries, ${testUsers.length} users.`);
 console.log(`Test cart data loaded: ${testCart.length} unique products, ${totalItems} total items in cart.`);

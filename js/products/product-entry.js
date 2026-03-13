@@ -1,8 +1,8 @@
-import { loadProducts, saveProducts } from "./products.js";
+import {loadProducts, Product, saveProducts} from "./products.js";
 
 const $form = $("#productEntryForm");
 const $id = $("#productEntryId");
-const $title = $("#productTitle");
+const $name = $("#productName");
 const $image = $("#productImage");
 const $description = $("#productDescription");
 const $category = $("#productCategory");
@@ -18,6 +18,50 @@ $form.on("submit", function (event) {
 
     resetFormStyles();
 
+    if (!validateFormInput()) return;
+
+    const products = loadProducts();
+    const duplicate = products.some(p => String(p.id) === String($id.val().trim()));
+
+    if (duplicate) {
+        $duplicateAlert.removeClass("d-none");
+        return;
+    }
+
+    const imageName = $image[0].files.length > 0 ? $image[0].files[0].name : "";
+
+    const product = new Product(
+        $id.val().trim(),
+        $name.val().trim(),
+        imageName,
+        $description.val().trim(),
+        $category.val().trim(),
+        $specifications.val().trim(),
+        Number($price.val()),
+        $additionalInfo.val().trim()
+    );
+
+    products.push(product);
+    saveProducts(products);
+
+    $successAlert.removeClass("d-none");
+    $form[0].reset();
+});
+
+function resetFormStyles() {
+    $id.removeClass("is-invalid");
+    $name.removeClass("is-invalid");
+    $image.removeClass("is-invalid");
+    $description.removeClass("is-invalid");
+    $category.removeClass("is-invalid");
+    $specifications.removeClass("is-invalid");
+    $price.removeClass("is-invalid");
+
+    $duplicateAlert.addClass("d-none");
+    $successAlert.addClass("d-none");
+}
+
+function validateFormInput() {
     let isValid = true;
 
     if (!$id.val().trim()) {
@@ -25,8 +69,8 @@ $form.on("submit", function (event) {
         isValid = false;
     }
 
-    if (!$title.val().trim()) {
-        $title.addClass("is-invalid");
+    if (!$name.val().trim()) {
+        $name.addClass("is-invalid");
         isValid = false;
     }
 
@@ -55,45 +99,5 @@ $form.on("submit", function (event) {
         isValid = false;
     }
 
-    if (!isValid) return;
-
-    const products = loadProducts();
-    const duplicate = products.some(p => String(p.id) === String($id.val().trim()));
-
-    if (duplicate) {
-        $duplicateAlert.removeClass("d-none");
-        return;
-    }
-
-    const imageName = $image[0].files.length > 0 ? $image[0].files[0].name : "";
-
-    const product = {
-        id: $id.val().trim(),
-        title: $title.val().trim(),
-        image: imageName,
-        description: $description.val().trim(),
-        category: $category.val().trim(),
-        specifications: $specifications.val().trim(),
-        price: Number($price.val()),
-        additionalInfo: $additionalInfo.val().trim()
-    };
-
-    products.push(product);
-    saveProducts(products);
-
-    $successAlert.removeClass("d-none");
-    $form[0].reset();
-});
-
-function resetFormStyles() {
-    $id.removeClass("is-invalid");
-    $title.removeClass("is-invalid");
-    $image.removeClass("is-invalid");
-    $description.removeClass("is-invalid");
-    $category.removeClass("is-invalid");
-    $specifications.removeClass("is-invalid");
-    $price.removeClass("is-invalid");
-
-    $duplicateAlert.addClass("d-none");
-    $successAlert.addClass("d-none");
+    return isValid;
 }
