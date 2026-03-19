@@ -1,3 +1,5 @@
+import { User, Product, Conference, ConferenceSignup } from './models';
+
 const BASE_URL = `http://localhost:3030`;
 const USERS_URL = `${BASE_URL}/users`;
 const CONFERENCES_URL = `${BASE_URL}/conferences`;
@@ -38,40 +40,45 @@ function del(url) {
 // ========================================
 
 /**
- * @returns {Promise<Array<{ name: string, email: string, phone: string, age: number, address: string }>>}
+ * Provides all {@link User} objects currently stored.
+ * @returns {Promise<null | User[]>} A list of all users, or null if the server returns no content.
  */
 export function getAllUsers() {
     return fetch(USERS_URL).then(handleResponse);
 }
 
 /**
- * @param {string} email - The user's email (acts as the unique key)
- * @returns {Promise<{ name: string, email: string, phone: string, age: number, address: string }>}
+ * Provides a specific {@link User} matching the given email string.
+ * @param email The email identifier for the desired {@link User} object.
+ * @returns {Promise<null | User>} The matching user, or null if the server returns no content.
  */
 export function getUser(email) {
     return fetch(`${USERS_URL}/${encodeURIComponent(email)}`).then(handleResponse);
 }
 
 /**
- * @param {{ name: string, email: string, phone: string, age: number, address: string }} userData
- * @returns {Promise<{ name: string, email: string, phone: string, age: number, address: string }>} The created user
+ * Adds a new {@link User} object to storage.
+ * @param userData The {@link User} to add.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function createUser(userData) {
     return post(USERS_URL, userData);
 }
 
 /**
- * @param {string} email - The email of the user to update
- * @param {{ name?: string, phone?: string, age?: number, address?: string }} userData - Only include fields you want to change
- * @returns {Promise<{ name: string, email: string, phone: string, age: number, address: string }>} The updated user
+ * Modifies an existing {@link User} object if one exists.
+ * @param email The email identifier for the desired {@link User} object.
+ * @param userData The updated {@link User} object to overwrite the previous version.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function updateUser(email, userData) {
     return put(`${USERS_URL}/${encodeURIComponent(email)}`, userData);
 }
 
 /**
- * @param {string} email - The email of the user to delete
- * @returns {Promise<null>}
+ * Deletes the requested {@link User} if a matching object is found.
+ * @param email The email identifier for the desired {@link User} object.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function deleteUser(email) {
     return del(`${USERS_URL}/${encodeURIComponent(email)}`);
@@ -82,40 +89,45 @@ export function deleteUser(email) {
 // ========================================
 
 /**
- * @returns {Promise<Array<{ id: number, title: string, description: string, category: string, format: string, entryPrice: number, additionalInfo: string }>>}
+ * Provides all {@link Conference} objects currently stored.
+ * @returns {Promise<null | Conference[]>} A list of all conferences, or null if the server returns no content.
  */
 export function getAllConferences() {
     return fetch(CONFERENCES_URL).then(handleResponse);
 }
 
 /**
- * @param {number} id - The conference ID
- * @returns {Promise<{ id: number, title: string, description: string, category: string, format: string, entryPrice: number, additionalInfo: string }>}
+ * Provides a specific {@link Conference} matching the given ID.
+ * @param id The identifier for the desired {@link Conference} object.
+ * @returns {Promise<null | Conference>} The matching conference, or null if the server returns no content.
  */
 export function getConference(id) {
     return fetch(`${CONFERENCES_URL}/${id}`).then(handleResponse);
 }
 
 /**
- * @param {{ title: string, description: string, category: string, format: string, entryPrice: number, additionalInfo: string }} conferenceData - ID is assigned automatically by the server
- * @returns {Promise<{ id: number, title: string, description: string, category: string, format: string, entryPrice: number, additionalInfo: string }>} The created conference (includes the assigned id)
+ * Adds a new {@link Conference} object to storage.
+ * @param conferenceData The {@link Conference} to add.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function createConference(conferenceData) {
     return post(CONFERENCES_URL, conferenceData);
 }
 
 /**
- * @param {number} id - The conference ID to update
- * @param {{ title?: string, description?: string, category?: string, format?: string, entryPrice?: number, additionalInfo?: string }} conferenceData - Only include fields you want to change
- * @returns {Promise<{ id: number, title: string, description: string, category: string, format: string, entryPrice: number, additionalInfo: string }>} The updated conference
+ * Modifies an existing {@link Conference} object if one exists.
+ * @param id The identifier for the desired {@link Conference} object.
+ * @param conferenceData The updated {@link Conference} object to overwrite the previous version.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function updateConference(id, conferenceData) {
     return put(`${CONFERENCES_URL}/${id}`, conferenceData);
 }
 
 /**
- * @param {number} id - The conference ID to delete
- * @returns {Promise<null>}
+ * Deletes the requested {@link Conference} if a matching object is found.
+ * @param id The identifier for the desired {@link Conference} object.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function deleteConference(id) {
     return del(`${CONFERENCES_URL}/${id}`);
@@ -126,40 +138,45 @@ export function deleteConference(id) {
 // ========================================
 
 /**
- * @returns {Promise<Array<{ id: number, name: string, image: string, description: string, category: string, specifications: string, price: number, additionalInfo: string }>>}
+ * Provides all {@link Product} objects currently stored.
+ * @returns {Promise<null | Product[]>} A list of all products, or null if the server returns no content.
  */
 export function getAllProducts() {
     return fetch(PRODUCTS_URL).then(handleResponse);
 }
 
 /**
- * @param {number} id - The product ID
- * @returns {Promise<{ id: number, name: string, image: string, description: string, category: string, specifications: string, price: number, additionalInfo: string }>}
+ * Provides a specific {@link Product} matching the given ID.
+ * @param id The identifier for the desired {@link Product} object.
+ * @returns {Promise<null | Product>} The matching product, or null if the server returns no content.
  */
 export function getProduct(id) {
     return fetch(`${PRODUCTS_URL}/${id}`).then(handleResponse);
 }
 
 /**
- * @param {{ name: string, image: string, description: string, category: string, specifications: string, price: number, additionalInfo: string }} productData - ID is assigned automatically by the server
- * @returns {Promise<{ id: number, name: string, image: string, description: string, category: string, specifications: string, price: number, additionalInfo: string }>} The created product (includes the assigned id)
+ * Adds a new {@link Product} object to storage.
+ * @param productData The {@link Product} to add.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function createProduct(productData) {
     return post(PRODUCTS_URL, productData);
 }
 
 /**
- * @param {number} id - The product ID to update
- * @param {{ name?: string, image?: string, description?: string, category?: string, specifications?: string, price?: number, additionalInfo?: string }} productData - Only include fields you want to change
- * @returns {Promise<{ id: number, name: string, image: string, description: string, category: string, specifications: string, price: number, additionalInfo: string }>} The updated product
+ * Modifies an existing {@link Product} object if one exists.
+ * @param id The identifier for the desired {@link Product} object.
+ * @param productData The updated {@link Product} object to overwrite the previous version.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function updateProduct(id, productData) {
     return put(`${PRODUCTS_URL}/${id}`, productData);
 }
 
 /**
- * @param {number} id - The product ID to delete
- * @returns {Promise<null>}
+ * Deletes the requested {@link Product} if a matching object is found.
+ * @param id The identifier for the desired {@link Product} object.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function deleteProduct(id) {
     return del(`${PRODUCTS_URL}/${id}`);
@@ -170,56 +187,63 @@ export function deleteProduct(id) {
 // ========================================
 
 /**
- * @returns {Promise<Array<{ id: number, userId: string, userEmail: string, conferenceId: number, signupData: object }>>}
+ * Provides all {@link ConferenceSignup} objects currently stored.
+ * @returns {Promise<null | ConferenceSignup[]>} A list of all signups, or null if the server returns no content.
  */
 export function getAllSignups() {
     return fetch(CONFERENCE_SIGNUPS_URL).then(handleResponse);
 }
 
 /**
- * @param {number} id - The signup ID
- * @returns {Promise<{ id: number, userId: string, userEmail: string, conferenceId: number, signupData: object }>}
+ * Provides a specific {@link ConferenceSignup} matching the given ID.
+ * @param id The identifier for the desired {@link ConferenceSignup} object.
+ * @returns {Promise<null | ConferenceSignup>} The matching signup, or null if the server returns no content.
  */
 export function getSignup(id) {
     return fetch(`${CONFERENCE_SIGNUPS_URL}/${id}`).then(handleResponse);
 }
 
 /**
- * @param {number} conferenceId - The conference ID to filter signups by
- * @returns {Promise<Array<{ id: number, userId: string, userEmail: string, conferenceId: number, signupData: object }>>}
+ * Provides all {@link ConferenceSignup} objects matching the given conference ID.
+ * @param conferenceId The conference identifier to filter signups by.
+ * @returns {Promise<null | ConferenceSignup[]>} A list of signups for the given conference, or null if the server returns no content.
  */
 export function getSignupsByConference(conferenceId) {
     return fetch(`${CONFERENCE_SIGNUPS_URL}?conferenceId=${conferenceId}`).then(handleResponse);
 }
 
 /**
- * @param {string} userEmail - The user's email to filter signups by
- * @returns {Promise<Array<{ id: number, userId: string, userEmail: string, conferenceId: number, signupData: object }>>}
+ * Provides all {@link ConferenceSignup} objects matching the given user email.
+ * @param userEmail The user email identifier to filter signups by.
+ * @returns {Promise<null | ConferenceSignup[]>} A list of signups for the given user, or null if the server returns no content.
  */
 export function getSignupsByUser(userEmail) {
     return fetch(`${CONFERENCE_SIGNUPS_URL}?userEmail=${encodeURIComponent(userEmail)}`).then(handleResponse);
 }
 
 /**
- * @param {{ userId: string, userEmail: string, conferenceId: number, signupData: object }} signupData - ID is assigned automatically by the server
- * @returns {Promise<{ id: number, userId: string, userEmail: string, conferenceId: number, signupData: object }>} The created signup (includes the assigned id)
+ * Adds a new {@link ConferenceSignup} object to storage.
+ * @param signupData The {@link ConferenceSignup} to add.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function createSignup(signupData) {
     return post(CONFERENCE_SIGNUPS_URL, signupData);
 }
 
 /**
- * @param {number} id - The signup ID to update
- * @param {{ signupData?: object }} signupData - Only include fields you want to change
- * @returns {Promise<{ id: number, userId: string, userEmail: string, conferenceId: number, signupData: object }>} The updated signup
+ * Modifies an existing {@link ConferenceSignup} object if one exists.
+ * @param id The identifier for the desired {@link ConferenceSignup} object.
+ * @param signupData The updated {@link ConferenceSignup} object to overwrite the previous version.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function updateSignup(id, signupData) {
     return put(`${CONFERENCE_SIGNUPS_URL}/${id}`, signupData);
 }
 
 /**
- * @param {number} id - The signup ID to delete
- * @returns {Promise<null>}
+ * Deletes the requested {@link ConferenceSignup} if a matching object is found.
+ * @param id The identifier for the desired {@link ConferenceSignup} object.
+ * @returns {Promise<null | *>} The server response body, or null if the server returns no content.
  */
 export function deleteSignup(id) {
     return del(`${CONFERENCE_SIGNUPS_URL}/${id}`);
