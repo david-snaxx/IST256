@@ -201,8 +201,8 @@ app.get('/conference-signups', (req, res) => {
     if (req.query.conferenceId) {
         return res.json(signups.filter(s => s.conferenceId === Number(req.query.conferenceId)));
     }
-    if (req.query.userEmail) {
-        return res.json(signups.filter(s => s.userEmail === req.query.userEmail));
+    if (req.query.email) {
+        return res.json(signups.filter(s => s.email === req.query.email));
     }
     res.json(signups);
 });
@@ -216,7 +216,7 @@ app.get('/conference-signups/:id', (req, res) => {
 });
 
 app.post('/conference-signups', (req, res) => {
-    const signup = { id: nextSignupId++, userId: req.body.userId, userEmail: req.body.userEmail, conferenceId: req.body.conferenceId, signupData: req.body.signupData };
+    const signup = { id: nextSignupId++, fullName: req.body.fullName, email: req.body.email, conferenceId: req.body.conferenceId, participationType: req.body.participationType, notes: req.body.notes };
     signups.push(signup);
     res.status(201).json(signup);
 });
@@ -226,8 +226,17 @@ app.put('/conference-signups/:id', (req, res) => {
     if (!signup) {
         return res.status(404).json({ error: 'Signup not found' });
     }
-    if (req.body.signupData !== undefined) {
-        signup.signupData = req.body.signupData;
+    if (req.body.fullName !== undefined) {
+        signup.fullName = req.body.fullName;
+    }
+    if (req.body.email !== undefined) {
+        signup.email = req.body.email;
+    }
+    if (req.body.participationType !== undefined) {
+        signup.participationType = req.body.participationType;
+    }
+    if (req.body.notes !== undefined) {
+        signup.notes = req.body.notes;
     }
     res.json(signup);
 });

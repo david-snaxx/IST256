@@ -18,7 +18,7 @@ function ApiDemo() {
             await S.createConference({ title: 'React Basics', description: 'Intro to React', category: 'Tech', format: 'Virtual', entryPrice: 0, additionalInfo: '' });
             await S.createConference({ title: 'Node Workshop', description: 'Express & APIs', category: 'Tech', format: 'In-Person', entryPrice: 25, additionalInfo: '' });
             await S.createProduct({ name: 'T-Shirt', image: '', description: 'Conference tee', category: 'Merch', specifications: 'Size: M', price: 19.99, additionalInfo: '' });
-            await S.createSignup({ userId: 'alice@example.com', userEmail: 'alice@example.com', conferenceId: 1, signupData: { notes: 'Excited!' } });
+            await S.createSignup({ fullName: 'Alice Example', email: 'alice@example.com', conferenceId: 1, participationType: 'in-person', notes: 'Excited!' });
 
             // fetch everything back from the API and put it into state
             setUsers(await S.getAllUsers());

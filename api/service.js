@@ -213,12 +213,12 @@ export function getSignupsByConference(conferenceId) {
 }
 
 /**
- * Provides all {@link ConferenceSignup} objects matching the given user email.
- * @param userEmail The user email identifier to filter signups by.
+ * Provides all {@link ConferenceSignup} objects matching the given email.
+ * @param email The email to filter signups by.
  * @returns {Promise<null | ConferenceSignup[]>} A list of signups for the given user, or null if the server returns no content.
  */
-export function getSignupsByUser(userEmail) {
-    return fetch(`${CONFERENCE_SIGNUPS_URL}?userEmail=${encodeURIComponent(userEmail)}`).then(handleResponse);
+export function getSignupsByUser(email) {
+    return fetch(`${CONFERENCE_SIGNUPS_URL}?email=${encodeURIComponent(email)}`).then(handleResponse);
 }
 
 /**

@@ -86,26 +86,29 @@ class Product {
 }
 
 /**
- * Data shape for a ConferenceSignup where userId is from a {@link User} and conferenceId is from a {@link Conference}.
+ * Data shape for a ConferenceSignup where conferenceId is from a {@link Conference}.
  * @param id An integer identifier
- * @param userId The integer identifier of the user signing up for this conference
- * @param userEmail The email of the user
- * @param confereceId The integer identifier of the conference being signed up for
- * @param signupDate The date timestamp of this event
+ * @param fullName The full name of the attendee
+ * @param email The email of the attendee
+ * @param conferenceId The integer identifier of the conference being signed up for
+ * @param participationType The participation format: "in-person", "virtual", or "vip"
+ * @param notes Additional notes or special requests from the attendee
  */
 class ConferenceSignup {
     id;
-    userId;
-    userEmail;
+    fullName;
+    email;
     conferenceId;
-    signupDate;
+    participationType;
+    notes;
 
-    constructor(id, userId, userEmail, conferenceId, signupDate) {
+    constructor(id, fullName, email, conferenceId, participationType, notes) {
         this.id = id;
-        this.userId = userEmail;
-        this.userEmail = userEmail;
+        this.fullName = fullName;
+        this.email = email;
         this.conferenceId = conferenceId;
-        this.signupDate = signupDate;
+        this.participationType = participationType;
+        this.notes = notes;
     }
 }
 

@@ -187,10 +187,10 @@
 
     // ---- Conference Signups (link some users to conferences) ----
     const testSignups = [
-        { userId: "1", userEmail: "alice.johnson@example.com", conferenceId: createdConferences[0]?.id, signupData: { dietaryRestrictions: "none" } },
-        { userId: "2", userEmail: "bob.martinez@example.com", conferenceId: createdConferences[0]?.id, signupData: { dietaryRestrictions: "vegetarian" } },
-        { userId: "1", userEmail: "alice.johnson@example.com", conferenceId: createdConferences[1]?.id, signupData: { attendanceMode: "virtual" } },
-        { userId: "4", userEmail: "david.kim@example.com", conferenceId: createdConferences[3]?.id, signupData: { role: "IT staff" } },
+        { fullName: "Alice Johnson", email: "alice.johnson@example.com", conferenceId: createdConferences[0]?.id, participationType: "in-person", notes: "No dietary restrictions" },
+        { fullName: "Bob Martinez", email: "bob.martinez@example.com", conferenceId: createdConferences[0]?.id, participationType: "in-person", notes: "Vegetarian dietary restrictions" },
+        { fullName: "Alice Johnson", email: "alice.johnson@example.com", conferenceId: createdConferences[1]?.id, participationType: "virtual", notes: "" },
+        { fullName: "David Kim", email: "david.kim@example.com", conferenceId: createdConferences[3]?.id, participationType: "vip", notes: "IT staff member" },
     ];
 
     for (const signup of testSignups) {
