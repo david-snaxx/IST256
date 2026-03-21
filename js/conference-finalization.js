@@ -1,5 +1,3 @@
-import { getAllConferences, createSignup } from "/api/service.js";
-
 const { useState, useEffect } = React;
 
 function ConferenceSignup() {
@@ -15,9 +13,19 @@ function ConferenceSignup() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getAllConferences()
-            .then((data) => setConferences(Array.isArray(data) ? data : []))
-            .catch(() => setError("Could not load conferences."));
+        fetch("http://localhost:3030/conferences")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to load conferences.");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setConferences(Array.isArray(data) ? data : []);
+            })
+            .catch(() => {
+                setError("Could not load conferences.");
+            });
     }, []);
 
     function validateEmail(value) {
@@ -34,7 +42,7 @@ function ConferenceSignup() {
             return;
         }
 
-        if (!validateEmail(email)) {
+        if (!validateEmail(email.trim())) {
             setError("Please enter a valid email address.");
             return;
         }
@@ -42,14 +50,26 @@ function ConferenceSignup() {
         const payload = {
             fullName: fullName.trim(),
             email: email.trim(),
-            conferenceId,
-            participationType,
+            conferenceId: conferenceId,
+            participationType: participationType,
             notes: notes.trim()
         };
 
         setLoading(true);
 
-        createSignup(payload)
+        fetch("http://localhost:3030/conference-signups", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to submit registration.");
+                }
+                return response.json();
+            })
             .then(() => {
                 setSuccess("Registration submitted successfully!");
                 setFullName("");
@@ -67,13 +87,14 @@ function ConferenceSignup() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+        <form onSubmit={handleSubmit} className="card shadow-sm p-4">
             {error && <div className="alert alert-danger">{error}</div>}
             {success && <div className="alert alert-success">{success}</div>}
 
             <div className="mb-3">
                 <label className="form-label">Full Name *</label>
                 <input
+                    type="text"
                     className="form-control"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
@@ -98,9 +119,9 @@ function ConferenceSignup() {
                     onChange={(e) => setConferenceId(e.target.value)}
                 >
                     <option value="">Select Conference</option>
-                    {conferences.map((c) => (
-                        <option key={c.id} value={c.id}>
-                            {c.title ?? c.name ?? `Conference ${c.id}`}
+                    {conferences.map((conference) => (
+                        <option key={conference.id} value={conference.id}>
+                            {conference.title || conference.name || `Conference ${conference.id}`}
                         </option>
                     ))}
                 </select>
@@ -113,6 +134,7 @@ function ConferenceSignup() {
                     <input
                         className="form-check-input"
                         type="radio"
+                        name="participationType"
                         id="in-person"
                         value="in-person"
                         checked={participationType === "in-person"}
@@ -127,6 +149,7 @@ function ConferenceSignup() {
                     <input
                         className="form-check-input"
                         type="radio"
+                        name="participationType"
                         id="virtual"
                         value="virtual"
                         checked={participationType === "virtual"}
@@ -141,6 +164,7 @@ function ConferenceSignup() {
                     <input
                         className="form-check-input"
                         type="radio"
+                        name="participationType"
                         id="vip"
                         value="vip"
                         checked={participationType === "vip"}
@@ -153,16 +177,16 @@ function ConferenceSignup() {
             </div>
 
             <div className="mb-3">
-                <label className="form-label">Notes</label>
+                <label className="form-label">Notes / Special Requests</label>
                 <textarea
                     className="form-control"
                     rows="4"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                />
+                ></textarea>
             </div>
 
-            <button className="btn btn-primary" disabled={loading}>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
                 {loading ? "Submitting..." : "Submit Registration"}
             </button>
         </form>
