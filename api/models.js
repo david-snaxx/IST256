@@ -31,6 +31,7 @@ class User {
  * @param format The presentation format of the conference
  * @param entryPrice The price to attend this conference
  * @param additionalInfo Additional conference info not covered elsewhere
+ * @param approved Whether this conference has been approved for display (defaults to false)
  */
 class Conference {
     id;
@@ -40,8 +41,9 @@ class Conference {
     format;
     entryPrice;
     additionalInfo;
+    approved;
 
-    constructor(id, title, description, category, format, entryPrice, additionalInfo) {
+    constructor(id, title, description, category, format, entryPrice, additionalInfo, approved = false) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -49,6 +51,7 @@ class Conference {
         this.format = format;
         this.entryPrice = entryPrice;
         this.additionalInfo = additionalInfo;
+        this.approved = approved;
     }
 }
 

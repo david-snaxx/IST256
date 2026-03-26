@@ -1,5 +1,6 @@
+const API_BASE = 'http://localhost:3030';
+
 // form field elements
-const $entryId = $('#entryId');
 const $title = $('#title');
 const $description = $('#description');
 const $entryPrice = $('#entryPrice');
@@ -17,26 +18,6 @@ if (editId) {
     loadEntryForEditing(editId);
 }
 
-class ConferenceEntry {
-    id;
-    title;
-    description;
-    category;
-    format;
-    entryPrice;
-    additionalInfo;
-
-    constructor(id, title, description, category, format, entryPrice, additionalInfo) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.format = format;
-        this.entryPrice = entryPrice;
-        this.additionalInfo = additionalInfo;
-    }
-}
-
 $('#entryForm').on('submit', validateForm);
 
 function validateForm(event) {
@@ -44,11 +25,6 @@ function validateForm(event) {
     resetFormStyles();
 
     let isValid = true;
-
-    if (!validateId($entryId.val())) {
-        $entryId.addClass('is-invalid');
-        isValid = false;
-    }
 
     if (!validateTitle($title.val())) {
         $title.addClass('is-invalid');
@@ -81,44 +57,50 @@ function validateForm(event) {
 }
 
 function saveEntry() {
-    const entries = JSON.parse(localStorage.getItem('entries') || '[]');
+    const entry = {
+        title: $title.val(),
+        description: $description.val(),
+        category: $('input[name="category"]:checked').val(),
+        format: $('input[name="format"]:checked').val(),
+        entryPrice: parseFloat($entryPrice.val()),
+        additionalInfo: $additionalInfo.val()
+    };
 
-    const entry = new ConferenceEntry(
-        $entryId.val(),
-        $title.val(),
-        $description.val(),
-        $('input[name="category"]:checked').val(),
-        $('input[name="format"]:checked').val(),
-        $entryPrice.val(),
-        $additionalInfo.val()
-    );
-
-    // if ?id=x param was present
     if (editId) {
-        const index = entries.findIndex(e => e.id === editId);
-        // edit existing entry
-        if (index !== -1) {
-            entries[index] = entry;
-            localStorage.setItem('entries', JSON.stringify(entries));
-            $successAlert.removeClass('d-none');
-        }
+        // update existing conference
+        $.ajax({
+            url: `${API_BASE}/conferences/${editId}`,
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(entry),
+            success: function () {
+                $successAlert.removeClass('d-none');
+            },
+            error: function (xhr) {
+                alert('Error updating conference: ' + (xhr.responseJSON?.error || 'Unknown error'));
+            }
+        });
     } else {
-        const isDuplicate = entries.some(e => e.id === entry.id);
-        if (isDuplicate) {
-            $duplicateAlert.removeClass('d-none');
-            return;
-        }
-
-        // valid new entry
-        entries.push(entry);
-        localStorage.setItem('entries', JSON.stringify(entries));
-        $successAlert.removeClass('d-none');
+        // create new conference
+        $.ajax({
+            url: `${API_BASE}/conferences`,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(entry),
+            success: function () {
+                $successAlert.removeClass('d-none');
+                $('#entryForm')[0].reset();
+            },
+            error: function (xhr) {
+                alert('Error saving conference: ' + (xhr.responseJSON?.error || 'Unknown error'));
+            }
+        });
     }
 }
 
 function resetFormStyles() {
     // clear input invalid states
-    $('#entryId, #title, #description, #entryPrice').removeClass('is-invalid');
+    $('#title, #description, #entryPrice').removeClass('is-invalid');
 
     // clear radio error messages
     $('#categoryError, #formatError').addClass('d-none');
@@ -126,10 +108,6 @@ function resetFormStyles() {
     // clear alerts
     $duplicateAlert.addClass('d-none');
     $successAlert.addClass('d-none');
-}
-
-function validateId(id) {
-    return id.length > 0;
 }
 
 function validateTitle(title) {
@@ -153,32 +131,30 @@ function validateEntryPrice(price) {
 }
 
 /**
- * Grabs an existing conference from localStorage if one exists and fill in the form details with that object.
- * Also changes relevant text on the page to signal the user is now editing and not creating with the form.
- * @param id The id of the ConferenceEntry object being edited.
+ * Fetches an existing conference from the API and fills in the form for editing.
+ * Also changes relevant text on the page to signal the user is now editing.
+ * @param id The id of the Conference being edited.
  */
 function loadEntryForEditing(id) {
-    const entries = JSON.parse(localStorage.getItem('entries') || '[]');
-    const entryToEdit = entries.find(e => e.id === id);
+    $.ajax({
+        url: `${API_BASE}/conferences/${id}`,
+        method: 'GET',
+        success: function (conf) {
+            // update the UI text to indicate "Edit Mode"
+            $('#conference-entry-info h5').text('Edit Conference Entry');
+            $('#conference-entry-info p').text('Update the details for this existing conference.');
+            $('button[type="submit"]').text('Update Entry');
 
-    if (entryToEdit) {
-        // update the UI text to indicate "Edit Mode"
-        $('#conference-entry-info h5').text('Edit Conference Entry');
-        $('#conference-entry-info p').text('Update the details for this existing conference.');
-        $('button[type="submit"]').text('Update Entry');
-
-        // populate the standard text inputs
-        $entryId.val(entryToEdit.id).prop('readonly', true); // Make ID read-only so they don't break the reference
-        $title.val(entryToEdit.title);
-        $description.val(entryToEdit.description);
-        $entryPrice.val(entryToEdit.entryPrice);
-        $additionalInfo.val(entryToEdit.additionalInfo);
-
-        // populate the radio buttons
-        $(`input[name="category"][value="${entryToEdit.category}"]`).prop('checked', true);
-        $(`input[name="format"][value="${entryToEdit.format}"]`).prop('checked', true);
-    } else {
-        // id in the URL doesn't exist in local storage
-        alert("We couldn't find an entry with that ID.");
-    }
+            // populate the form fields
+            $title.val(conf.title);
+            $description.val(conf.description);
+            $entryPrice.val(conf.entryPrice);
+            $additionalInfo.val(conf.additionalInfo);
+            $(`input[name="category"][value="${conf.category}"]`).prop('checked', true);
+            $(`input[name="format"][value="${conf.format}"]`).prop('checked', true);
+        },
+        error: function () {
+            alert("We couldn't find a conference with that ID.");
+        }
+    });
 }
