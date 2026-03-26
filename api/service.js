@@ -1,5 +1,3 @@
-import { User, Product, Conference, ConferenceSignup } from './models';
-
 const BASE_URL = `http://localhost:3030`;
 const USERS_URL = `${BASE_URL}/users`;
 const CONFERENCES_URL = `${BASE_URL}/conferences`;
@@ -94,6 +92,15 @@ export function deleteUser(email) {
  */
 export function getAllConferences() {
     return fetch(CONFERENCES_URL).then(handleResponse);
+}
+
+/**
+ * Provides all {@link Conference} objects matching the given approval status.
+ * @param {boolean} approved Whether to fetch approved (true) or unapproved (false) conferences.
+ * @returns {Promise<null | Conference[]>} A filtered list of conferences, or null if the server returns no content.
+ */
+export function getConferencesByApproval(approved) {
+    return fetch(`${CONFERENCES_URL}?approved=${approved}`).then(handleResponse);
 }
 
 /**

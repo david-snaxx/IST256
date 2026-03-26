@@ -81,6 +81,10 @@ app.delete('/users/:email', (req, res) => {
 // ========================================
 
 app.get('/conferences', (req, res) => {
+    if (req.query.approved !== undefined) {
+        const approved = req.query.approved === 'true';
+        return res.json(conferences.filter(c => c.approved === approved));
+    }
     res.json(conferences);
 });
 
@@ -93,7 +97,7 @@ app.get('/conferences/:id', (req, res) => {
 });
 
 app.post('/conferences', (req, res) => {
-    const conf = { id: nextConferenceId++, title: req.body.title, description: req.body.description, category: req.body.category, format: req.body.format, entryPrice: req.body.entryPrice, additionalInfo: req.body.additionalInfo };
+    const conf = { id: nextConferenceId++, title: req.body.title, description: req.body.description, category: req.body.category, format: req.body.format, entryPrice: req.body.entryPrice, additionalInfo: req.body.additionalInfo, approved: false };
     conferences.push(conf);
     res.status(201).json(conf);
 });
@@ -120,6 +124,9 @@ app.put('/conferences/:id', (req, res) => {
     }
     if (req.body.additionalInfo !== undefined) {
         conf.additionalInfo = req.body.additionalInfo;
+    }
+    if (req.body.approved !== undefined) {
+        conf.approved = req.body.approved;
     }
     res.json(conf);
 });
