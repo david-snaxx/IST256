@@ -4,9 +4,9 @@ const mysql = require("mysql");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "rootpassword",
+    password: "root",
     port: 3306,
-    database: "ConfDB"
+    database: "nittanyconf"
 });
 
 connection.connect(err => {
