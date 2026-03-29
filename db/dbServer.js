@@ -14,5 +14,5 @@ connection.connect(err => {
     console.log("Connected!");
 });
 
-const conferenceRoute = require("./conferenceRoute.js");
+const conferenceRoute = require("./routes/conferenceRoute.js");
 app.use("/conference", conferenceRoute(connection));
