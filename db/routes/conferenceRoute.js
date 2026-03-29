@@ -6,9 +6,14 @@ module.exports = function(connection) {
 
     // GET localhost:3301/conferences
     // this endpoint returns all Conference objects in the database
+    // optionally filtered by approval status with ?approved=true or ?approved=false
     router.get("/", (request, response) => {
-        const query = `SELECT * FROM conferences`;
-        connection.query(query, (error, result) => {
+        const approved = request.query.approved;
+        const query = approved !== undefined
+            ? `SELECT * FROM conferences WHERE approved = ?`
+            : `SELECT * FROM conferences`;
+        const params = approved !== undefined ? [approved === 'true' ? 1 : 0] : [];
+        connection.query(query, params, (error, result) => {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
