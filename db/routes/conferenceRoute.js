@@ -4,7 +4,7 @@ const express = require('express');
 module.exports = function(connection) {
     const router = express.Router();
 
-    // GET localhost:3306/conferences
+    // GET localhost:3301/conferences
     // this endpoint returns all Conference objects in the database
     router.get("/", (request, response) => {
         const query = `SELECT * FROM conferences`;
@@ -16,7 +16,7 @@ module.exports = function(connection) {
         })
     });
 
-    // GET localhost:3306/conferences/{id}
+    // GET localhost:3301/conferences/{id}
     // this endpoint returns a Conference with the given {id} if that id is found
     router.get("/:id", (request, response) => {
         const query = `
@@ -34,7 +34,7 @@ module.exports = function(connection) {
         })
     })
 
-    // POST localhost:3306/conferences
+    // POST localhost:3301/conferences
     // this endpoint adds a new Conference object to the database
     router.post("/", (request, response) => {
         const {
@@ -52,7 +52,7 @@ module.exports = function(connection) {
         });
     })
 
-    //PUT localhost:3306/conferences/{id}
+    //PUT localhost:3301/conferences/{id}
     // this endpoint updates a Conference object with the matching {id} if one is found in the database with that id
     router.put("/:id", (request, response) => {
         const {
@@ -73,7 +73,7 @@ module.exports = function(connection) {
         })
     })
 
-    // DELETE localhost:3306/conferences/{id}
+    // DELETE localhost:3301/conferences/{id}
     // this endpoint deletes the Conference object with the given {id} if one exists in the database
     router.delete("/:id", (request, response) => {
         const query = `

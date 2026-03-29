@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "root",
-    port: 3306,
+    port: 3306, //port 3306 should be MySQL's port
     database: "nittanyconf"
 });
 
@@ -25,8 +25,8 @@ app.use((request, response, next) => {
     }
     next();
 })
-app.listen(3306, () => {
-    console.log("REST DB server running on http://localhost:3306");
+app.listen(3301, () => {
+    console.log("REST DB server running on http://localhost:3301");
 })
 
 const conferenceRoute = require("./routes/conferenceRoute.js");
