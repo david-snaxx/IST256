@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3030';
+const API_BASE = 'http://localhost:3301';
 
 // form field elements
 const $title = $('#title');

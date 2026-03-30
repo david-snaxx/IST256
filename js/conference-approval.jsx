@@ -8,7 +8,12 @@ function ConferenceApproval() {
     const [approvingId, setApprovingId] = useState(null);
 
     useEffect(() => {
-        fetchPendingConferences();
+        if (window.Service) {
+            fetchPendingConferences();
+        } else { // wait for the service-event ready if needed
+            window.addEventListener('service-ready',
+                fetchPendingConferences, { once: true });
+        }
     }, []);
 
     function fetchPendingConferences() {
@@ -70,7 +75,7 @@ function ConferenceApproval() {
                                             <div className="d-flex flex-wrap gap-2 mb-2">
                                                 <span className="badge bg-secondary">{conf.category}</span>
                                                 <span className="badge bg-info text-dark">{conf.format}</span>
-                                                <span className="badge bg-success">${conf.entryPrice != null ? conf.entryPrice.toFixed(2) : "0.00"}</span>
+                                                <span className="badge bg-success">${conf.entryPrice != null ? Number(conf.entryPrice).toFixed(2) : "0.00"}</span>
                                             </div>
                                             {conf.additionalInfo && (
                                                 <p className="card-text small text-muted mb-0">
