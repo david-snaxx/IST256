@@ -31,3 +31,6 @@ app.listen(3301, () => {
 
 const conferenceRoute = require("./routes/conferenceRoute.js");
 app.use("/conferences", conferenceRoute(connection));
+
+const productRoute = require("./routes/productRoute.js");
+app.use("/products", productRoute(connection));
