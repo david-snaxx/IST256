@@ -132,12 +132,14 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
   <script src="/js/site.js" defer></script>
 
-  <script>
+  <script type="module">
+    import { getAllProducts } from '/api/service.js';
+
     function loadCart() {
       return JSON.parse(localStorage.getItem("cart")) || [];
     }
 
-    function renderOrderSummary() {
+    async function renderOrderSummary() {
       const cart = loadCart();
       const summaryBody = document.getElementById("order-summary-body");
       const totalEl = document.getElementById("order-total");
@@ -153,17 +155,20 @@
 
       emptyMessage.classList.add("d-none");
 
+      const products = await getAllProducts().catch(() => []) || [];
       let total = 0;
 
       cart.forEach(item => {
+        const product = products.find(p => String(p.id) === String(item.id));
+        if (!product) return;
         const quantity = Number(item.quantity) || 0;
-        const price = Number(item.price) || 0;
+        const price = Number(product.price) || 0;
         const subtotal = quantity * price;
         total += subtotal;
 
         summaryBody.innerHTML += `
           <tr>
-            <td>${item.name}</td>
+            <td>${product.name}</td>
             <td>${quantity}</td>
             <td class="text-end">$${subtotal.toFixed(2)}</td>
           </tr>
