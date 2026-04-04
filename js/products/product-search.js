@@ -37,8 +37,8 @@ $(function () {
         renderProductList($(this).val());
     });
 
-    $("#productsBody").on("click", ".btn-add-cart", function () {
-        addToCart(String($(this).data("id")), 1);
+    $("#productsBody").on("click", ".btn-add-cart", async function () {
+        await addToCart(String($(this).data("id")), 1);
         alert("Item added to cart!");
     });
 });

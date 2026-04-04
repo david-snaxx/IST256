@@ -36,8 +36,8 @@ async function renderProductDetails() {
 
     document.getElementById("detailsAdditional").textContent = product.additionalInfo ?? "";
 
-    document.getElementById("addToCartBtn").addEventListener("click", () => {
-        addToCart(String(product.id), 1);
+    document.getElementById("addToCartBtn").addEventListener("click", async () => {
+        await addToCart(String(product.id), 1);
         alert("Item added to cart!");
     });
 }
