@@ -34,3 +34,6 @@ app.use("/conferences", conferenceRoute(connection));
 
 const productRoute = require("./routes/productRoute.js");
 app.use("/products", productRoute(connection));
+
+const userRoute = require("./routes/userRoute.js");
+app.use("/users", userRoute(connection));
