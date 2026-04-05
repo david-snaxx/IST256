@@ -1,3 +1,5 @@
+import { getAllProducts, createProduct, updateProduct as serviceUpdateProduct } from '/api/service.js';
+
 export class Product {
     id;
     name;
@@ -21,59 +23,28 @@ export class Product {
 }
 
 /**
- * Fetches the base product catalog from the server and merges it with any
- * user-added products held in local storage. Local storage takes precedence,
- * so user-added or updated products will override catalog entries with the same id.
- * @return {Promise<object[]>} Resolving to the merged array of {@link Product}-shaped objects.
+ * Fetches all products from the MySQL database via the REST API.
+ * @return {Promise<object[]>} Resolving to the array of {@link Product}-shaped objects.
  */
 export function loadProducts() {
-    return fetch('/assets/products.json')
-        .then(response => response.json())
-        .then(assetsProducts => {
-            const localProducts = JSON.parse(localStorage.getItem('products')) || [];
-            const merged = [...assetsProducts];
-            // add localStorage products that don't overlap assets product ids
-            localProducts.forEach(localProduct => {
-                const idx = merged.findIndex(p => String(p.id) === String(localProduct.id));
-                if (idx !== -1) merged[idx] = localProduct;
-                else merged.push(localProduct);
-            });
-            return merged;
-        });
-}
-
-function saveLocalProducts(products) {
-    localStorage.setItem('products', JSON.stringify(products));
+    return getAllProducts();
 }
 
 /**
- * Adds a new product to local storage.
+ * Adds a new product to the database via the REST API.
  * @param product The {@link Product} to add.
+ * @return {Promise} Resolving to the server response.
  */
 export function addProduct(product) {
-    const localProducts = JSON.parse(localStorage.getItem('products')) || [];
-    localProducts.push(product);
-    saveLocalProducts(localProducts);
+    return createProduct(product);
 }
 
 /**
- * Modifies an existing {@link Product} if one exists in the merged catalog.
- * If the product originated from the base catalog, it is saved as an override in local storage.
+ * Modifies an existing {@link Product} in the database via the REST API.
  * @param updatedProduct The new version of the {@link Product} object.
- * @return {Promise<boolean>} Resolving to true if found and updated, false if not found.
+ * @return {Promise<boolean>} Resolving to true if updated successfully.
  */
 export async function updateProduct(updatedProduct) {
-    const products = await loadProducts();
-    const exists = products.some(p => String(p.id) === String(updatedProduct.id));
-    if (!exists) return false;
-
-    const localProducts = JSON.parse(localStorage.getItem('products')) || [];
-    const idx = localProducts.findIndex(p => String(p.id) === String(updatedProduct.id));
-    if (idx !== -1) {
-        localProducts[idx] = updatedProduct;
-    } else {
-        localProducts.push(updatedProduct);
-    }
-    saveLocalProducts(localProducts);
+    await serviceUpdateProduct(updatedProduct.id, updatedProduct);
     return true;
 }

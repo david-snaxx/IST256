@@ -38,9 +38,10 @@ function ConferenceApproval() {
         setApprovingId(id);
         const service = window.Service;
 
-        service.updateConference(id, { approved: true })
-            .then((updated) => {
-                setSuccess(`"${updated.title}" has been approved!`);
+        const conf = conferences.find((c) => c.id === id);
+        service.updateConference(id, { ...conf, approved: true })
+            .then(() => {
+                setSuccess(`"${conf.title}" has been approved!`);
                 setConferences((prev) => prev.filter((c) => c.id !== id));
             })
             .catch(() => {

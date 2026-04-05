@@ -14,11 +14,11 @@ export function clearCart() {
 }
 
 export function addToCart(productId, quantity) {
-    changeCartProductQuantity(productId, quantity);
+    return changeCartProductQuantity(productId, quantity);
 }
 
 export function removeFromCart(productId, quantity) {
-    changeCartProductQuantity(productId, -quantity);
+    return changeCartProductQuantity(productId, -quantity);
 }
 
 async function changeCartProductQuantity(productId, quantityChange) {
@@ -30,7 +30,7 @@ async function changeCartProductQuantity(productId, quantityChange) {
     if (!itemInCart) {
         if (quantityChange > 0) {
             const products = await loadProducts();
-            const productExists = products.some(p => p.id === productId);
+            const productExists = products.some(p => String(p.id) === String(productId));
 
             if (productExists) {
                 cart.push({ id: productId, quantity: quantityChange });
@@ -60,7 +60,7 @@ export async function getCartTotal() {
     const products = await loadProducts();
     let sum = 0;
     cart.forEach(item => {
-        const product = products.find(p => p.id === item.id);
+        const product = products.find(p => String(p.id) === String(item.id));
         if (product) sum += product.price * item.quantity;
     });
     return sum;
@@ -87,7 +87,7 @@ async function renderCart() {
     // fill the table with products in cart, accumulating total as we go
     let total = 0;
     cart.forEach(item => {
-        const product = products.find(p => p.id === item.id);
+        const product = products.find(p => String(p.id) === String(item.id));
         if (!product) return;
         total += product.price * item.quantity;
         $body.append(`

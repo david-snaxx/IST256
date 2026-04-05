@@ -1,3 +1,5 @@
+import { createUser, updateUser, getUser } from '/api/service.js';
+
 let emailInputElement = document.getElementById('email');
 let nameInputElement = document.getElementById('fullName');
 let phoneInputElement = document.getElementById('phone');
@@ -10,70 +12,52 @@ let successDiv = document.getElementById('success-alert');
 document.querySelector('form').addEventListener('submit', validateNewUser);
 
 const params = new URLSearchParams(window.location.search);
-const editIndexRaw = params.get("edit");
-const editIndex = editIndexRaw !== null ? Number(editIndexRaw) : null;
-
-class User {
-    email;
-    name;
-    phone;
-    age;
-    address;
-
-    constructor(name, email, phone, age, address) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.age = age;
-        this.address = address;
-    }
-}
+const editEmail = params.get("edit");
 
 document.addEventListener("DOMContentLoaded", function () {
     prefillFormIfEditMode();
 });
 
-function prefillFormIfEditMode() {
-    if (editIndex === null || Number.isNaN(editIndex)) return;
+async function prefillFormIfEditMode() {
+    if (!editEmail) return;
 
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users[editIndex];
+    try {
+        const user = await getUser(editEmail);
 
-    if (!user) {
+        nameInputElement.value = user.name || "";
+        emailInputElement.value = user.email || "";
+        emailInputElement.readOnly = true;
+        phoneInputElement.value = user.phone || "";
+        ageInputElement.value = user.age || "";
+        addressInputElement.value = user.address || "";
+
+        const headers = document.querySelectorAll("h5");
+        headers.forEach(h => {
+            if (h.textContent.trim().toLowerCase() === "new account") {
+                h.textContent = "Update Account";
+            }
+        });
+
+        const btn = document.getElementById("submitBtn");
+        if (btn) btn.textContent = "Update";
+    } catch (e) {
         alert("Invalid edit link. Returning to home.");
         window.location.href = "index.html";
-        return;
     }
-
-    nameInputElement.value = user.name || "";
-    emailInputElement.value = user.email || "";
-    phoneInputElement.value = user.phone || "";
-    ageInputElement.value = user.age || "";
-    addressInputElement.value = user.address || "";
-
-    const headers = document.querySelectorAll("h5");
-    headers.forEach(h => {
-        if (h.textContent.trim().toLowerCase() === "new account") {
-            h.textContent = "Update Account";
-        }
-    });
-
-    const btn = document.getElementById("submitBtn");
-    if (btn) btn.textContent = "Update";
 }
 
-function validateNewUser(event) {
+async function validateNewUser(event) {
     event.preventDefault();
     resetFormInputStyles();
     let invalidInput = false;
 
-    const newUser = new User(
-        nameInputElement.value.trim(),
-        emailInputElement.value.trim(),
-        phoneInputElement.value.trim(),
-        ageInputElement.value.trim(),
-        addressInputElement.value.trim(),
-    );
+    const newUser = {
+        name: nameInputElement.value.trim(),
+        email: emailInputElement.value.trim(),
+        phone: phoneInputElement.value.trim(),
+        age: ageInputElement.value.trim(),
+        address: addressInputElement.value.trim(),
+    };
 
     if (!validateName(newUser.name)) {
         nameInputElement.classList.add('is-invalid');
@@ -100,14 +84,17 @@ function validateNewUser(event) {
         invalidInput = true;
     }
 
-    
     if (!invalidInput) {
-        const success = saveUser(newUser);
-        if (success) {
-            successDiv.classList.remove('d-none');
-            setTimeout(() => window.location.href = "index.html", 600);
-        } else {
-            duplicateDiv.classList.remove('d-none');
+        try {
+            const success = await saveUser(newUser);
+            if (success) {
+                successDiv.classList.remove('d-none');
+                setTimeout(() => window.location.href = "index.html", 600);
+            } else {
+                duplicateDiv.classList.remove('d-none');
+            }
+        } catch (e) {
+            alert('Error saving user: ' + e.message);
         }
     } else {
         failureDiv.classList.remove('d-none');
@@ -177,30 +164,20 @@ function resetFormInputStyles() {
     successDiv.classList.add('d-none');
 }
 
-function saveUser(newUser) {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-    if (editIndex !== null && !Number.isNaN(editIndex)) {
-        if (!users[editIndex]) return false;
-
-        const isDuplicate = users.some((storedUser, idx) =>
-            idx !== editIndex && storedUser.email === newUser.email
-        );
-
-        if (isDuplicate) return false;
-
-        users[editIndex] = newUser;
-        localStorage.setItem('users', JSON.stringify(users));
+async function saveUser(newUser) {
+    if (editEmail) {
+        await updateUser(editEmail, newUser);
         return true;
     }
 
-    const isDuplicate = users.some((storedUser) => storedUser.email === newUser.email);
-
-    if (isDuplicate) {
+    // check for duplicate email before creating the new entry
+    try {
+        await getUser(newUser.email);
+        // user found, duplicate
         return false;
+    } catch (e) {
+        // user not found, safe to create
+        await createUser(newUser);
+        return true;
     }
-
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    return true;
 }
