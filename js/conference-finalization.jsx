@@ -13,13 +13,7 @@ function ConferenceSignup() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetch("http://localhost:3301/conferences")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to load conferences.");
-                }
-                return response.json();
-            })
+        Service.getAllConferences()
             .then((data) => {
                 setConferences(Array.isArray(data) ? data : []);
             })
@@ -57,19 +51,7 @@ function ConferenceSignup() {
 
         setLoading(true);
 
-        fetch("http://localhost:3301/conference-signups", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to submit registration.");
-                }
-                return response.json();
-            })
+        Service.createSignup(payload)
             .then(() => {
                 setSuccess("Registration submitted successfully!");
                 setFullName("");
