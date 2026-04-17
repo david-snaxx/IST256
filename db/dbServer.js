@@ -15,6 +15,11 @@ connection.connect(err => {
 });
 
 app.use(express.json());
+// log every incoming request
+app.use((request, response, next) => {
+    console.log(`[${new Date().toISOString()}] ${request.method} ${request.url}`);
+    next();
+});
 // allow cross-origin requests
 app.use((request, response, next) => {
     response.header('Access-Control-Allow-Origin', '*');

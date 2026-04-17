@@ -25,6 +25,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] SELECT conference_signups returned ${result.length} row(s)`);
             response.json(result);
         })
     });
@@ -43,6 +44,7 @@ module.exports = function(connection) {
             } else if (result.length === 0)  {
                 return response.status(404).json({ error: "ConferenceSignup not found with given id" });
             }
+            console.log(`[DB] SELECT conference_signups WHERE id=${request.params.id} returned 1 row`);
             response.json(result[0]);
         })
     })
@@ -61,6 +63,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] INSERT into conference_signups successful, insertId: ${result.insertId}`);
             response.json(result);
         });
     })
@@ -82,6 +85,7 @@ module.exports = function(connection) {
             } else if (result.affectedRows === 0) {
                 return response.status(404).json({ error: "ConferenceSignup not found with given id" });
             }
+            console.log(`[DB] UPDATE conference_signups WHERE id=${request.params.id}, affectedRows: ${result.affectedRows}`);
             response.json(result);
         })
     })
@@ -97,6 +101,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] DELETE from conference_signups WHERE id=${request.params.id}, affectedRows: ${result.affectedRows}`);
             response.json(result);
         })
     })

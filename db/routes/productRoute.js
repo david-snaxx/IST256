@@ -8,12 +8,13 @@ module.exports = function(connection) {
     // this endpoint returns all Product objects in the database
     // optionally filtered by approval status with ?approved=true or ?approved=false
     router.get("/", (request, response) => {
-        const query = 
+        const query =
             `SELECT * FROM products`;
         connection.query(query, (error, result) => {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] SELECT products returned ${result.length} row(s)`);
             response.json(result);
         })
     });
@@ -32,6 +33,7 @@ module.exports = function(connection) {
             } else if (result.length === 0)  {
                 return response.status(404).json({ error: "Product not found with given id" });
             }
+            console.log(`[DB] SELECT products WHERE id=${request.params.id} returned 1 row`);
             response.json(result[0]);
         })
     })
@@ -50,6 +52,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] INSERT into products successful, insertId: ${result.insertId}`);
             response.json(result);
         });
     })
@@ -71,6 +74,7 @@ module.exports = function(connection) {
             } else if (result.affectedRows === 0) {
                 return response.status(404).json({ error: "Product not found with given id" });
             }
+            console.log(`[DB] UPDATE products WHERE id=${request.params.id}, affectedRows: ${result.affectedRows}`);
             response.json(result);
         })
     })
@@ -86,6 +90,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] DELETE from products WHERE id=${request.params.id}, affectedRows: ${result.affectedRows}`);
             response.json(result);
         })
     })

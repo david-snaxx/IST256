@@ -17,6 +17,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] SELECT conferences returned ${result.length} row(s)`);
             response.json(result);
         })
     });
@@ -35,6 +36,7 @@ module.exports = function(connection) {
             } else if (result.length === 0)  {
                 return response.status(404).json({ error: "Conference not found with given id" });
             }
+            console.log(`[DB] SELECT conferences WHERE id=${request.params.id} returned 1 row`);
             response.json(result[0]);
         })
     })
@@ -53,6 +55,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] INSERT into conferences successful, insertId: ${result.insertId}`);
             response.json(result);
         });
     })
@@ -74,6 +77,7 @@ module.exports = function(connection) {
             } else if (result.affectedRows === 0) {
                 return response.status(404).json({ error: "Conference not found with given id" });
             }
+            console.log(`[DB] UPDATE conferences WHERE id=${request.params.id}, affectedRows: ${result.affectedRows}`);
             response.json(result);
         })
     })
@@ -89,6 +93,7 @@ module.exports = function(connection) {
             if (error) {
                 return response.status(500).json({ error: error.message });
             }
+            console.log(`[DB] DELETE from conferences WHERE id=${request.params.id}, affectedRows: ${result.affectedRows}`);
             response.json(result);
         })
     })

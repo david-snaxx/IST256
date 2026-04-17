@@ -61,7 +61,7 @@ export async function getCartTotal() {
     let sum = 0;
     cart.forEach(item => {
         const product = products.find(p => String(p.id) === String(item.id));
-        if (product) sum += product.price * item.quantity;
+        if (product) sum += Number(product.price) * item.quantity;
     });
     return sum;
 }
@@ -89,11 +89,12 @@ async function renderCart() {
     cart.forEach(item => {
         const product = products.find(p => String(p.id) === String(item.id));
         if (!product) return;
-        total += product.price * item.quantity;
+        const price = Number(product.price);
+        total += price * item.quantity;
         $body.append(`
             <tr>
                 <td>${product.name}</td>
-                <td>$${product.price.toFixed(2)}</td>
+                <td>$${price.toFixed(2)}</td>
                 <td style="width:120px">
                     <div class="input-group input-group-sm">
                         <button class="btn btn-outline-secondary btn-qty-minus" data-id="${item.id}">−</button>
@@ -101,7 +102,7 @@ async function renderCart() {
                         <button class="btn btn-outline-secondary btn-qty-plus" data-id="${item.id}">+</button>
                     </div>
                 </td>
-                <td class="text-end">$${(product.price * item.quantity).toFixed(2)}</td>
+                <td class="text-end">$${(price * item.quantity).toFixed(2)}</td>
                 <td class="text-center">
                     <button class="btn btn-sm btn-outline-danger btn-remove" data-id="${item.id}">&times;</button>
                 </td>

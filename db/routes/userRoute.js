@@ -14,6 +14,7 @@ module.exports = function(connection) {
       if (error) {
         return response.status(500).json({ error: error.message });
       }
+      console.log(`[DB] SELECT users returned ${result.length} row(s)`);
       response.json(result);
     });
   });
@@ -29,6 +30,7 @@ module.exports = function(connection) {
       } else if (result.length === 0) {
         return response.status(404).json({ error: "User not found with given email" });
       }
+      console.log(`[DB] SELECT users WHERE email=${request.params.email} returned 1 row`);
       response.json(result[0]);
     });
   });
@@ -44,14 +46,15 @@ module.exports = function(connection) {
     `;
 
     connection.query(
-      query,
-      [name, email, phone, age, address],
-      (error, result) => {
-        if (error) {
-          return response.status(500).json({ error: error.message });
+        query,
+        [name, email, phone, age, address],
+        (error, result) => {
+          if (error) {
+            return response.status(500).json({ error: error.message });
+          }
+          console.log(`[DB] INSERT into users successful, insertId: ${result.insertId}`);
+          response.json(result);
         }
-        response.json(result);
-      }
     );
   });
 
@@ -67,16 +70,17 @@ module.exports = function(connection) {
     `;
 
     connection.query(
-      query,
-      [name, phone, age, address, request.params.email],
-      (error, result) => {
-        if (error) {
-          return response.status(500).json({ error: error.message });
-        } else if (result.affectedRows === 0) {
-          return response.status(404).json({ error: "User not found with given email" });
+        query,
+        [name, phone, age, address, request.params.email],
+        (error, result) => {
+          if (error) {
+            return response.status(500).json({ error: error.message });
+          } else if (result.affectedRows === 0) {
+            return response.status(404).json({ error: "User not found with given email" });
+          }
+          console.log(`[DB] UPDATE users WHERE email=${request.params.email}, affectedRows: ${result.affectedRows}`);
+          response.json(result);
         }
-        response.json(result);
-      }
     );
   });
 
@@ -89,6 +93,7 @@ module.exports = function(connection) {
       if (error) {
         return response.status(500).json({ error: error.message });
       }
+      console.log(`[DB] DELETE from users WHERE email=${request.params.email}, affectedRows: ${result.affectedRows}`);
       response.json(result);
     });
   });
